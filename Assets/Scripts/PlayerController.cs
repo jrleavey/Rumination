@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +14,14 @@ public class PlayerController : MonoBehaviour
     private float _horizMove;
     private float _vertMove;
     [SerializeField]
-    private GameObject[] _camera;
+    private GameManager _gameManager;
+    [SerializeField]
+    private GameObject[] _cameras;
+
+    private void Awake()
+    {
+        
+    }
 
     void Start()
     {
@@ -48,8 +56,8 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Camera_Trigger")
         {
             Debug.Log("Hit trigger");
-            _camera[0].SetActive(false);
-            _camera[1].SetActive(true);
+            _cameras[0].SetActive(false);
+            _cameras[1].SetActive(true);
             other.gameObject.SetActive(false);
         }
     }
