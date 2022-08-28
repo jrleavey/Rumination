@@ -16,7 +16,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameManager _gameManager;
     [SerializeField]
-    private GameObject[] _cameras;
+    private int _handgunAmmo;
+    [SerializeField]
+    private int _shotgunAmmo;
+    [SerializeField]
+    private float _currentHP;
+    private float _maxHp;
 
     private void Awake()
     {
@@ -51,14 +56,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Heal()
     {
-        if (other.tag == "Camera_Trigger")
-        {
-            Debug.Log("Hit trigger");
-            _cameras[0].SetActive(false);
-            _cameras[1].SetActive(true);
-            other.gameObject.SetActive(false);
-        }
+        Debug.Log("Player has healed");
+    }
+    public void HandgunAmmoPickup()
+    {
+        Debug.Log("Player has picked up rounds");
+    }
+    public void ShotgunAmmoPickup()
+    {
+        Debug.Log("Player has picked up shells");
+    }
+
+    public void KeyPickup()
+    {
+        //Array needed for keys
+        Debug.Log("Player has picked up Key");
+
     }
 }
