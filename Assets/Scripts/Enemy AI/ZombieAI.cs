@@ -6,9 +6,10 @@ using UnityEngine.AI;
 public class ZombieAI : MonoBehaviour
 {
     private NavMeshAgent _navMeshAgent;
-
-    [SerializeField]
-    private GameObject _player;
+    public float radius = 20f;
+    public float angle = 90f;
+    public bool _isChasingPlayer = false;
+    public GameObject _player;
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -26,7 +27,10 @@ public class ZombieAI : MonoBehaviour
 
     private void Attack()
     {
-
+        // Play animation
+        // Add Hitbox
+        // Deal Damage (Call Damage function on Player)
+        // Cooldown
     }
 
 }

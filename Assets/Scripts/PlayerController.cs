@@ -20,8 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private int _shotgunAmmo;
     [SerializeField]
-    private float _currentHP;
-    private float _maxHp;
+    private int _currentHP;
+    [SerializeField]
+    private int _maxHp = 5;
 
     private void Awake()
     {
@@ -56,16 +57,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Heal()
+    public void Heal(int healingAmount)
     {
         Debug.Log("Player has healed");
+        _currentHP = _currentHP + healingAmount;
     }
     public void HandgunAmmoPickup()
     {
+        // Run logic for gaining bullets
         Debug.Log("Player has picked up rounds");
     }
     public void ShotgunAmmoPickup()
     {
+        // Run logic for gaining Shells
         Debug.Log("Player has picked up shells");
     }
 
@@ -74,5 +78,11 @@ public class PlayerController : MonoBehaviour
         //Array needed for keys
         Debug.Log("Player has picked up Key");
 
+    }
+
+    public void TookDamage(int damage)
+    {
+        // Enemy collider can call this function to apply damage, based on the int "Damage" value
+        _currentHP = _currentHP - damage;
     }
 }
