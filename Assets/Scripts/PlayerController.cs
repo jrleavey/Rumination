@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -23,6 +24,13 @@ public class PlayerController : MonoBehaviour
     private int _currentHP;
     [SerializeField]
     private int _maxHp = 5;
+    [SerializeField]
+    private Text _healthTxt;
+    [SerializeField]
+    private Text _ammoTxt;
+    [SerializeField]
+    private bool isUsingHandgun = true;
+
 
     private void Awake()
     {
@@ -33,11 +41,24 @@ public class PlayerController : MonoBehaviour
     {
         _rotateSpeed = 150f;
         _speed = 4f;
+        _currentHP = _maxHp;
     }
 
     void Update()
     {
         TankControls();
+
+        _healthTxt.text = "Health: " + _currentHP;
+        if (isUsingHandgun == true)
+        {
+            _ammoTxt.text = "Ammo: " + _handgunAmmo;
+        }
+        else
+        {
+            _ammoTxt.text = "Ammo" + _shotgunAmmo;
+        }
+
+        SwapWeapon();
     }
 
     private void TankControls()
@@ -61,6 +82,8 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Player has healed");
         _currentHP = _currentHP + healingAmount;
+
+        
     }
     public void HandgunAmmoPickup()
     {
@@ -84,5 +107,10 @@ public class PlayerController : MonoBehaviour
     {
         // Enemy collider can call this function to apply damage, based on the int "Damage" value
         _currentHP = _currentHP - damage;
+    }
+
+    private void SwapWeapon()
+    {
+        // Pressing the left stick in swaps weapon(s)
     }
 }

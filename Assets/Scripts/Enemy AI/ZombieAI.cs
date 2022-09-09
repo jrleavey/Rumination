@@ -82,10 +82,7 @@ public class ZombieAI : MonoBehaviour
 
     private void Attack()
     {
-        // Play animation
-        // Add Hitbox
-        // Deal Damage (Call Damage function on Player)
-        // Cooldown
+        _player.GetComponent<PlayerController>().TookDamage(1);
     }
 
 }
