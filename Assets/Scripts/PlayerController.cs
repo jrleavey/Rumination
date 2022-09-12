@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool isMoving;
     [SerializeField]
+    private bool isAiming;
+    [SerializeField]
     private float _rotateSpeed;
     [SerializeField]
     private float _speed;
@@ -30,11 +32,21 @@ public class PlayerController : MonoBehaviour
     private Text _ammoTxt;
     [SerializeField]
     private bool isUsingHandgun = true;
+    private Animator _anim;
+
+    // Controller Info
+
+    public bool aButton;
+    public bool menuButton;
+    public float leftAnalogStickHorizontal;
+    public float leftAnalogStickVertical;
+    public float leftTrigger;
+
 
 
     private void Awake()
     {
-        
+        _anim = GetComponent<Animator>();
     }
 
     void Start()
@@ -46,7 +58,9 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        TankControls();
+        MovementController();
+        WeaponControls();
+        SwapWeapon();
 
         _healthTxt.text = "Health: " + _currentHP;
         if (isUsingHandgun == true)
@@ -57,14 +71,36 @@ public class PlayerController : MonoBehaviour
         {
             _ammoTxt.text = "Ammo" + _shotgunAmmo;
         }
-
-        SwapWeapon();
-    }
-
-    private void TankControls()
-    {
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+        if (isMoving == true)
         {
+            _anim.SetBool("isMoving", true);
+        }
+        else
+        {
+            _anim.SetBool("isMoving", false);
+
+        }
+        if (isAiming == true)
+        {
+            _anim.SetBool("isAiming", true);
+        }
+        else
+        {
+            _anim.SetBool("isAiming", false);
+
+        }
+        aButton = Input.GetButton("A Button");
+        menuButton = Input.GetButton("Menu Button");
+        leftAnalogStickHorizontal = Input.GetAxis("Left Analog Stick (Horizontal)");
+        leftAnalogStickVertical = Input.GetAxis("Left Analog Stick (Vertical)");
+        leftTrigger = Input.GetAxis("Left Trigger");
+
+    }
+    private void MovementController()
+    {
+        if (Input.GetButton("Left Analog Stick (Horizontal)") || Input.GetButton("Left Analog Stick (Vertical)"))
+        {
+            Debug.Log("Reading Axis Input");
             isMoving = true;
             _horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
             _vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
@@ -75,6 +111,13 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = false;
 
+        }
+    }
+    private void WeaponControls()
+    {
+        if (Input.GetButton("Fire1"))
+        {
+            Debug.Log("Button Working");
         }
     }
 
