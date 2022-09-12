@@ -118,7 +118,7 @@ public class PlayerController : MonoBehaviour
            if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, range))
             {
                 Debug.Log(hit.transform);
-                Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward, Color.red);
+                Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward * 5, Color.red);
             }                                         
         }
     }
