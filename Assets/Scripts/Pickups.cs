@@ -42,23 +42,4 @@ public class Pickups : MonoBehaviour
         _player.GetComponent<PlayerController>().KeyPickup();
 
     }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag == "Player")
-        {
-            switch (_pickupID)
-            {
-                case 0:
-                    HealthPickup();
-                    break;
-                case 1:
-                    PistolAmmoPickup();
-                    break;
-                case 2:
-                    ShotgunAmmoPickup();
-                    break;
-            }
-        }
-    }
 }

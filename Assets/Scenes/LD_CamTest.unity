@@ -11699,6 +11699,9 @@ MonoBehaviour:
   _ammoTxt: {fileID: 700549860}
   isUsingHandgun: 1
   RaycastHolder: {fileID: 586025915}
+  _handgunShot: {fileID: 0}
+  _shotgunShot: {fileID: 0}
+  _outOfAmmo: {fileID: 0}
   aButton: 0
   menuButton: 0
   leftAnalogStickHorizontal: 0
@@ -15165,7 +15168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9fdb304b18db4d04bad15c5e865959df, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 9fdb304b18db4d04bad15c5e865959df, type: 3}
       propertyPath: m_StaticEditorFlags
