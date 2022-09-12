@@ -832,23 +832,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 1.2547
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 1.2547
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
+      value: 1.2547
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.0000031732
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.028
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4c8985fee96d49345a004ed2df0028f7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1266,7 +1266,7 @@ MonoBehaviour:
   angle: 90
   _isChasingPlayer: 0
   _player: {fileID: 0}
-  walkRadius: 10
+  walkRadius: 0
 --- !u!95 &886215618
 Animator:
   serializedVersion: 3
@@ -2295,7 +2295,7 @@ MonoBehaviour:
   _rotateSpeed: 0
   _speed: 0
   _gameManager: {fileID: 968881400}
-  _handgunAmmo: 0
+  _handgunAmmo: 10
   _shotgunAmmo: 0
   _currentHP: 0
   _maxHp: 5
@@ -2303,6 +2303,9 @@ MonoBehaviour:
   _ammoTxt: {fileID: 1702932095}
   isUsingHandgun: 1
   RaycastHolder: {fileID: 1853954659}
+  _handgunShot: {fileID: 8300000, guid: 22d123da4f1f4d747bd68a23d26cfd2e, type: 3}
+  _shotgunShot: {fileID: 8300000, guid: 96c1da0ced2e0c840befb60865df8ea6, type: 3}
+  _outOfAmmo: {fileID: 8300000, guid: c98b38e6e0a56314fb64a294fbe491d8, type: 3}
   aButton: 0
   menuButton: 0
   leftAnalogStickHorizontal: 0
@@ -2361,6 +2364,102 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 76aecd4550ee28449aa742718082d716, type: 3}
   m_PrefabInstance: {fileID: 1305639142}
   m_PrefabAsset: {fileID: 0}
+--- !u!82 &1354141145
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354141139}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1680600275
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,6 +38,14 @@ public class PlayerController : MonoBehaviour
     private float damage;
     private float range;
 
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _handgunShot;
+    [SerializeField]
+    private AudioClip _shotgunShot;
+    [SerializeField]
+    private AudioClip _outOfAmmo;
+
     // Controller Info
 
     public bool aButton;
@@ -75,7 +83,7 @@ public class PlayerController : MonoBehaviour
     }
     private void MovementController()
     {
-        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+        if (Input.GetButton("Horizontal") && isAiming == false || Input.GetButton("Vertical") && isAiming == false)
         {
             isMoving = true;
             _horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
@@ -108,10 +116,11 @@ public class PlayerController : MonoBehaviour
         else
         {
             _anim.SetBool("isAiming", false);
+            isAiming = false;
 
         }
 
-        if (isAiming == true && Input.GetKey(KeyCode.E))
+        if (isAiming == true && Input.GetKeyDown(KeyCode.E) && _handgunAmmo >= 1)
         {
             
             RaycastHit hit;
@@ -119,8 +128,15 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log(hit.transform);
                 Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward * 5, Color.red);
-            }                                         
+            }
+            _handgunAmmo--;
+            AudioSource.PlayClipAtPoint(_handgunShot, transform.position);
         }
+        else if (isAiming == true && Input.GetKeyDown(KeyCode.E) && _handgunAmmo <= 0)
+        {
+            AudioSource.PlayClipAtPoint(_outOfAmmo, transform.position);
+        }
+                  
     }
 
     public void Heal(int healingAmount)
