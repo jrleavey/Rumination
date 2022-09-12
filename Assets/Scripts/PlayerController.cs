@@ -33,6 +33,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool isUsingHandgun = true;
     private Animator _anim;
+    [SerializeField]
+    private GameObject RaycastHolder;
+    private float damage;
+    private float range;
 
     // Controller Info
 
@@ -54,6 +58,11 @@ public class PlayerController : MonoBehaviour
         _rotateSpeed = 150f;
         _speed = 4f;
         _currentHP = _maxHp;
+        //aButton = Input.GetButton("A Button");
+        //menuButton = Input.GetButton("Menu Button");
+        //leftAnalogStickHorizontal = Input.GetAxis("Left Analog Stick (Horizontal)");
+        //leftAnalogStickVertical = Input.GetAxis("Left Analog Stick (Vertical)");
+        //leftTrigger = Input.GetAxis("Left Trigger");
     }
 
     void Update()
@@ -63,44 +72,11 @@ public class PlayerController : MonoBehaviour
         SwapWeapon();
 
         _healthTxt.text = "Health: " + _currentHP;
-        if (isUsingHandgun == true)
-        {
-            _ammoTxt.text = "Ammo: " + _handgunAmmo;
-        }
-        else
-        {
-            _ammoTxt.text = "Ammo" + _shotgunAmmo;
-        }
-        if (isMoving == true)
-        {
-            _anim.SetBool("isMoving", true);
-        }
-        else
-        {
-            _anim.SetBool("isMoving", false);
-
-        }
-        if (isAiming == true)
-        {
-            _anim.SetBool("isAiming", true);
-        }
-        else
-        {
-            _anim.SetBool("isAiming", false);
-
-        }
-        aButton = Input.GetButton("A Button");
-        menuButton = Input.GetButton("Menu Button");
-        leftAnalogStickHorizontal = Input.GetAxis("Left Analog Stick (Horizontal)");
-        leftAnalogStickVertical = Input.GetAxis("Left Analog Stick (Vertical)");
-        leftTrigger = Input.GetAxis("Left Trigger");
-
     }
     private void MovementController()
     {
-        if (Input.GetButton("Left Analog Stick (Horizontal)") || Input.GetButton("Left Analog Stick (Vertical)"))
+        if (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
         {
-            Debug.Log("Reading Axis Input");
             isMoving = true;
             _horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
             _vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
@@ -112,12 +88,37 @@ public class PlayerController : MonoBehaviour
             isMoving = false;
 
         }
+        if (isMoving == true)
+        {
+            _anim.SetBool("isMoving", true);
+        }
+        else
+        {
+            _anim.SetBool("isMoving", false);
+
+        }
     }
     private void WeaponControls()
     {
-        if (Input.GetButton("Fire1"))
+        if (Input.GetKey(KeyCode.Space))
         {
-            Debug.Log("Button Working");
+            isAiming = true;
+            _anim.SetBool("isAiming", true);
+        }  
+        else
+        {
+            _anim.SetBool("isAiming", false);
+
+        }
+
+        if (isAiming == true && Input.GetKey(KeyCode.E))
+        {
+            
+            RaycastHit hit;
+           if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, range))
+            {
+                Debug.Log(hit.transform);
+            }                                         
         }
     }
 
@@ -155,5 +156,23 @@ public class PlayerController : MonoBehaviour
     private void SwapWeapon()
     {
         // Pressing the left stick in swaps weapon(s)
+        if (isUsingHandgun == true)
+        {
+            range = 100;
+            damage = 10;
+        }
+        else
+        {
+            range = 50;
+            damage = 30;
+        }
+        if (isUsingHandgun == true)
+        {
+            _ammoTxt.text = "Ammo: " + _handgunAmmo;
+        }
+        else
+        {
+            _ammoTxt.text = "Ammo" + _shotgunAmmo;
+        }
     }
 }
