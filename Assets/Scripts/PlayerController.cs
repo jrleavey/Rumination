@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
             _horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
             _vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
             this.gameObject.transform.Rotate(0, _horizMove, 0);
-            this.gameObject.transform.Translate(0, 0, _vertMove);
+            this.gameObject.transform.Translate(0, 0, _vertMove * _speed);
         }
         else
         {
