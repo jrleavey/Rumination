@@ -41,6 +41,10 @@ public class HunterAI : MonoBehaviour
     [SerializeField]
     private bool haveIScreamed = false;
 
+
+    private int _maxhp = 6;
+    private int _currenthp = Random.Range(1, 6);
+
     [Range(0, 500)] public float walkRadius;
     void Start()
     {
@@ -70,13 +74,14 @@ public class HunterAI : MonoBehaviour
             StartCoroutine(Roar());
             _AIState = AIState.Hostile;
         }
-        if (_IAmWaiting == true)
+        if (_navMeshAgent.speed == 0)
         {
             _anim.SetBool("isMoving", false);
         }
         else
         {
             _anim.SetBool("isMoving", true);
+
         }
     }
 
@@ -84,7 +89,6 @@ public class HunterAI : MonoBehaviour
     {
         if (_navMeshAgent != null && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance && _IAmWaiting == false)
         {
-            _anim.SetBool("isMoving", true);
             _navMeshAgent.SetDestination(RandomNavMeshLocation());
             _IAmWaiting = true;
             StartCoroutine(RandomWaitTimer());
@@ -93,6 +97,11 @@ public class HunterAI : MonoBehaviour
     private IEnumerator Roar()
     {
         _navMeshAgent.speed = 0;
+        
+        if (_audioSource.isActiveAndEnabled == false)
+        {
+            _audioSource.enabled = true;
+        }
         _anim.SetTrigger("hasSeenPlayer");
         yield return new WaitForSeconds(2f);
         _navMeshAgent.speed = 5;
@@ -144,7 +153,9 @@ public class HunterAI : MonoBehaviour
     IEnumerator RandomWaitTimer()
     {
         int wait_time = Random.Range(3, 7);
+        _navMeshAgent.speed = 0;
         yield return new WaitForSeconds(wait_time);
+        _navMeshAgent.speed = 5;
         print("I waited for " + wait_time + "sec");
         _IAmWaiting = false;
     }
@@ -166,17 +177,32 @@ public class HunterAI : MonoBehaviour
         StartCoroutine(Roar());
         _navMeshAgent.destination = _player.transform.position;
 
-        if (_navMeshAgent.remainingDistance < .5)
+        if (_navMeshAgent.remainingDistance < 1)
         {
-            _anim.SetTrigger("isAttacking");
+            _anim.SetBool("inRangetoAttack", true);
 
             Attack();
+        }
+        else
+        {
+            _anim.SetBool("inRangetoAttack", false);
+
         }
     }
 
     private void Attack()
     {
         _player.GetComponent<PlayerController>().TookDamage(1);
+    }
+
+    private void Damage()
+    {
+        
+    }
+
+    private void Die()
+    {
+
     }
 
 }
