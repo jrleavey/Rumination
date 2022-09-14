@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,14 +47,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private AudioClip _outOfAmmo;
 
+    private PlayerControls _playerControls;
+
     // Controller Info
 
     public bool aButton;
     public bool menuButton;
     public float leftAnalogStickHorizontal;
-    public float leftAnalogStickVertical;
-    public float leftTrigger;
+    public bool leftAnalogStickVertical;
+    public bool leftTrigger;
+    private bool isMenuOpen = false;
 
+
+
+    // Left stick (Tank Controls)
+    // Left stick (Press) Swap weapon
+    // Left Trigger (Aim)
+    // A button (Interact)
 
 
     private void Awake()
@@ -66,28 +76,79 @@ public class PlayerController : MonoBehaviour
         _rotateSpeed = 150f;
         _speed = 4f;
         _currentHP = _maxHp;
+
+        _playerControls = new PlayerControls();
+        _playerControls.Controller.Enable();
+        InputSetup();
         //aButton = Input.GetButton("A Button");
         //menuButton = Input.GetButton("Menu Button");
         //leftAnalogStickHorizontal = Input.GetAxis("Left Analog Stick (Horizontal)");
         //leftAnalogStickVertical = Input.GetAxis("Left Analog Stick (Vertical)");
         //leftTrigger = Input.GetAxis("Left Trigger");
+
+        //if (abutton is true && conditional)
+        {
+            //do game logic
+        }
+
+        //Switch statement to check pickups
+        //check tag as string for switch value
+        // do logic
     }
 
     void Update()
     {
         MovementController();
         WeaponControls();
-        SwapWeapon();
-
         _healthTxt.text = "Health: " + _currentHP;
     }
+
+    private void InputSetup()
+    {
+        _playerControls.Controller.LeftTrigger.performed += LeftTrigger_performed;
+        _playerControls.Controller.LeftTrigger.canceled += LeftTrigger_canceled;
+        _playerControls.Controller.LeftStickClick.performed += LeftStickClick_performed;
+        _playerControls.Controller.Menu.performed += Menu_performed;
+        _playerControls.Controller.Interact.performed += Interact_performed;
+    }
+    private void Interact_performed(InputAction.CallbackContext obj)
+    {
+        aButton = true;
+    }
+
+    private void Menu_performed(InputAction.CallbackContext obj)
+    {
+        isMenuOpen = !isMenuOpen;
+    }
+
+    private void LeftStickClick_performed(InputAction.CallbackContext obj)
+    {
+        isUsingHandgun = !isUsingHandgun;
+        SwapWeapon();
+    }
+
+    private void LeftTrigger_canceled(InputAction.CallbackContext obj)
+    {
+        leftTrigger = false;
+    }
+
+    private void LeftTrigger_performed(InputAction.CallbackContext obj)
+    {
+        leftTrigger = true;
+    }
+
     private void MovementController()
     {
-        if (Input.GetButton("Horizontal") && isAiming == false || Input.GetButton("Vertical") && isAiming == false)
+        Vector2 leftStick = _playerControls.Controller.LeftStickMovement.ReadValue<Vector2>();
+
+        if (Mathf.Abs(leftStick.x) > 1f || Mathf.Abs(leftStick.y) > 0)
         {
             isMoving = true;
-            _horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
-            _vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
+            
+            _horizMove = leftStick.x * Time.deltaTime * _rotateSpeed;
+            _vertMove = leftStick.y * Time.deltaTime * _speed;
+            //_horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
+            //_vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
             this.gameObject.transform.Rotate(0, _horizMove, 0);
             this.gameObject.transform.Translate(0, 0, _vertMove * _speed);
         }
@@ -108,7 +169,7 @@ public class PlayerController : MonoBehaviour
     }
     private void WeaponControls()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (leftTrigger == true)
         {
             isAiming = true;
             _anim.SetBool("isAiming", true);
@@ -120,11 +181,11 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (isAiming == true && Input.GetKeyDown(KeyCode.E) && _handgunAmmo >= 1)
+        if (isAiming == true && aButton == true && _handgunAmmo >= 1)
         {
-            
+            aButton = false;
             RaycastHit hit;
-           if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, range))
+            if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, range))
             {
                 Debug.Log(hit.transform);
                 Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward * 5, Color.red);
@@ -132,8 +193,9 @@ public class PlayerController : MonoBehaviour
             _handgunAmmo--;
             AudioSource.PlayClipAtPoint(_handgunShot, transform.position);
         }
-        else if (isAiming == true && Input.GetKeyDown(KeyCode.E) && _handgunAmmo <= 0)
+        else if (isAiming == true && aButton == true && _handgunAmmo <= 0)
         {
+            aButton = false;
             AudioSource.PlayClipAtPoint(_outOfAmmo, transform.position);
         }
                   
@@ -172,16 +234,17 @@ public class PlayerController : MonoBehaviour
 
     private void SwapWeapon()
     {
-        // Pressing the left stick in swaps weapon(s)
         if (isUsingHandgun == true)
         {
             range = 100;
             damage = 10;
+            Debug.Log("Handgun");
         }
         else
         {
             range = 50;
             damage = 30;
+            Debug.Log("Shotgun");
         }
         if (isUsingHandgun == true)
         {
@@ -191,5 +254,10 @@ public class PlayerController : MonoBehaviour
         {
             _ammoTxt.text = "Ammo" + _shotgunAmmo;
         }
+    }
+
+    private void AccessMenu()
+    {
+
     }
 }
