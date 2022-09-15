@@ -40,10 +40,13 @@ public class HunterAI : MonoBehaviour
     private bool isDying = false;
     [SerializeField]
     private bool haveIScreamed = false;
+    [SerializeField]
+    private GameObject[] _hitboxes;
 
 
     private int _maxhp = 6;
-    private int _currenthp = Random.Range(1, 6);
+    [SerializeField]
+    private int _currentHp;
 
     [Range(0, 500)] public float walkRadius;
     void Start()
@@ -52,10 +55,12 @@ public class HunterAI : MonoBehaviour
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
+        _currentHp = Random.Range(1, 6);
     }
 
     void Update()
     {
+        
         switch (_AIState)
         {
             case AIState.Passive:
@@ -65,7 +70,7 @@ public class HunterAI : MonoBehaviour
                 ChasePlayer();
                 break;
             case AIState.Dying:
-                //
+                Die();
                 break;
         }
 
@@ -73,6 +78,10 @@ public class HunterAI : MonoBehaviour
         {
             StartCoroutine(Roar());
             _AIState = AIState.Hostile;
+        }
+        if (_currentHp <= 0)
+        {
+            _AIState = AIState.Dying;
         }
         if (_navMeshAgent.speed == 0)
         {
@@ -180,29 +189,36 @@ public class HunterAI : MonoBehaviour
         if (_navMeshAgent.remainingDistance < 1)
         {
             _anim.SetBool("inRangetoAttack", true);
+            _hitboxes[0].SetActive(true);
+            _hitboxes[1].SetActive(true);
 
-            Attack();
         }
         else
         {
+            _hitboxes[0].SetActive(false);
+            _hitboxes[1].SetActive(false);
             _anim.SetBool("inRangetoAttack", false);
 
         }
     }
-
-    private void Attack()
-    {
-        _player.GetComponent<PlayerController>().TookDamage(1);
-    }
-
     private void Damage()
     {
-        
+        _currentHp--;
+        canSeePlayer = true;
     }
 
     private void Die()
     {
-
+        if (_currentHp <= 0)
+        {
+            _anim.SetTrigger("isDying");
+            _navMeshAgent.enabled = false;
+            StartCoroutine(DespawnTimer());
+        }
     }
-
+    private IEnumerator DespawnTimer()
+    {
+        yield return new WaitForSeconds(4f);
+        Destroy(this.gameObject);
+    }
 }

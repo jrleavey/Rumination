@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -49,22 +50,12 @@ public class PlayerController : MonoBehaviour
 
     private PlayerControls _playerControls;
 
-    // Controller Info
-
     public bool aButton;
     public bool menuButton;
     public float leftAnalogStickHorizontal;
     public bool leftAnalogStickVertical;
     public bool leftTrigger;
     private bool isMenuOpen = false;
-
-
-
-    // Left stick (Tank Controls)
-    // Left stick (Press) Swap weapon
-    // Left Trigger (Aim)
-    // A button (Interact)
-
 
     private void Awake()
     {
@@ -80,11 +71,6 @@ public class PlayerController : MonoBehaviour
         _playerControls = new PlayerControls();
         _playerControls.Controller.Enable();
         InputSetup();
-        //aButton = Input.GetButton("A Button");
-        //menuButton = Input.GetButton("Menu Button");
-        //leftAnalogStickHorizontal = Input.GetAxis("Left Analog Stick (Horizontal)");
-        //leftAnalogStickVertical = Input.GetAxis("Left Analog Stick (Vertical)");
-        //leftTrigger = Input.GetAxis("Left Trigger");
 
         //if (abutton is true && conditional)
         {
@@ -98,9 +84,22 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
         MovementController();
         WeaponControls();
         _healthTxt.text = "Health: " + _currentHP;
+
+        if (isUsingHandgun == true)
+        {
+            _ammoTxt.text = "Ammo:" + _handgunAmmo;
+        }
+        else
+        {
+            _ammoTxt.text = "Ammo:" + _shotgunAmmo;
+        }
     }
 
     private void InputSetup()
@@ -141,22 +140,40 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 leftStick = _playerControls.Controller.LeftStickMovement.ReadValue<Vector2>();
 
-        if (Mathf.Abs(leftStick.x) > 1f || Mathf.Abs(leftStick.y) > 0)
+        //if (Mathf.Abs(leftStick.x) > 1f || Mathf.Abs(leftStick.y) > 0)
+        //{
+        //    isMoving = true;
+
+        //    _horizMove = leftStick.x * Time.deltaTime * _rotateSpeed;
+        //    _vertMove = leftStick.y * Time.deltaTime * _speed;
+
+        //    this.gameObject.transform.Rotate(0, _horizMove, 0);
+        //    this.gameObject.transform.Translate(0, 0, _vertMove * _speed);
+        //}
+        //if (Mathf.Abs(leftStick.x) <= 0)
+        //{
+        //    isMoving = false;
+
+        //}
+
+        if (Mathf.Abs(leftStick.y) > 0.2f)
         {
             isMoving = true;
-            
-            _horizMove = leftStick.x * Time.deltaTime * _rotateSpeed;
             _vertMove = leftStick.y * Time.deltaTime * _speed;
-            //_horizMove = Input.GetAxis("Horizontal") * Time.deltaTime * _rotateSpeed;
-            //_vertMove = Input.GetAxis("Vertical") * Time.deltaTime * _speed;
-            this.gameObject.transform.Rotate(0, _horizMove, 0);
             this.gameObject.transform.Translate(0, 0, _vertMove * _speed);
+
         }
         else
         {
             isMoving = false;
-
         }
+        if (Mathf.Abs(leftStick.x) > 0.2f)
+        {
+            _horizMove = leftStick.x * Time.deltaTime * _rotateSpeed;
+            this.gameObject.transform.Rotate(0, _horizMove, 0);
+        }
+
+
         if (isMoving == true)
         {
             _anim.SetBool("isMoving", true);
@@ -172,12 +189,14 @@ public class PlayerController : MonoBehaviour
         if (leftTrigger == true)
         {
             isAiming = true;
+            _speed = 0;
             _anim.SetBool("isAiming", true);
         }  
         else
         {
             _anim.SetBool("isAiming", false);
             isAiming = false;
+            _speed = 2;
 
         }
 
@@ -185,10 +204,13 @@ public class PlayerController : MonoBehaviour
         {
             aButton = false;
             RaycastHit hit;
-            if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, range))
+
+            if (Physics.Raycast(RaycastHolder.transform.position, RaycastHolder.transform.forward, out hit, Mathf.Infinity))
             {
+                Debug.Log("Fired Raycast");
                 Debug.Log(hit.transform);
-                Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward * 5, Color.red);
+                hit.collider.SendMessage("Damage", damage);
+                Debug.DrawRay(RaycastHolder.transform.position, RaycastHolder.transform.forward * Mathf.Infinity, Color.red);
             }
             _handgunAmmo--;
             AudioSource.PlayClipAtPoint(_handgunShot, transform.position);
@@ -197,6 +219,11 @@ public class PlayerController : MonoBehaviour
         {
             aButton = false;
             AudioSource.PlayClipAtPoint(_outOfAmmo, transform.position);
+        }
+
+        if (isAiming == true)
+        {
+            isMoving = false;
         }
                   
     }
@@ -230,20 +257,30 @@ public class PlayerController : MonoBehaviour
     {
         // Enemy collider can call this function to apply damage, based on the int "Damage" value
         _currentHP = _currentHP - damage;
+        if (_currentHP <= 0)
+        {
+            Die();
+        }
+    }
+    public void Die()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+
     }
 
     private void SwapWeapon()
     {
         if (isUsingHandgun == true)
         {
-            range = 100;
-            damage = 10;
+            range = 1000;
+            damage = 1;
             Debug.Log("Handgun");
         }
         else
         {
-            range = 50;
-            damage = 30;
+            range = 500;
+            damage = Random.Range(3, 8);
             Debug.Log("Shotgun");
         }
         if (isUsingHandgun == true)
@@ -259,5 +296,13 @@ public class PlayerController : MonoBehaviour
     private void AccessMenu()
     {
 
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Hunter_Damage_hit")
+        {
+            TookDamage(2);
+        }
     }
 }
