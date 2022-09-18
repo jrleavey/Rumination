@@ -53443,6 +53443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1428991411346275346, guid: 65fc615b3ba4a2c44a2e2fb5871d694b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1971299003516667379, guid: 65fc615b3ba4a2c44a2e2fb5871d694b, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -53518,6 +53522,10 @@ PrefabInstance:
     - target: {fileID: 2076665764888762154, guid: 65fc615b3ba4a2c44a2e2fb5871d694b, type: 3}
       propertyPath: _handgunAmmo
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4084947956175076884, guid: 65fc615b3ba4a2c44a2e2fb5871d694b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65fc615b3ba4a2c44a2e2fb5871d694b, type: 3}
@@ -62055,6 +62063,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6763176366603312863, guid: 85cf7525cc311cd4e905772c5c83bb01, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e058b987ed45dc04f8b66df2570d19fc, type: 2}
+    - target: {fileID: -941874092978799035, guid: 85cf7525cc311cd4e905772c5c83bb01, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e058b987ed45dc04f8b66df2570d19fc, type: 2}
     - target: {fileID: 919132149155446097, guid: 85cf7525cc311cd4e905772c5c83bb01, type: 3}
       propertyPath: m_Name
       value: Apt_Glass_DDoor_Anim
