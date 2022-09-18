@@ -80,6 +80,8 @@ public class PlayerController : MonoBehaviour
         //Switch statement to check pickups
         //check tag as string for switch value
         // do logic
+
+        _anim.SetBool("isUsingHandgun", true);
     }
 
     void Update()
