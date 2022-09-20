@@ -43,8 +43,6 @@ public class HunterAI : MonoBehaviour
     [SerializeField]
     private GameObject[] _hitboxes;
 
-
-    private int _maxhp = 6;
     [SerializeField]
     private int _currentHp;
 
@@ -55,7 +53,7 @@ public class HunterAI : MonoBehaviour
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
-        _currentHp = Random.Range(1, 6);
+        _currentHp = Random.Range(5,12);
     }
 
     void Update()
@@ -204,7 +202,15 @@ public class HunterAI : MonoBehaviour
     private void Damage()
     {
         _currentHp--;
+        StartCoroutine(DamageSlowDown());
         canSeePlayer = true;
+    }
+
+    private IEnumerator DamageSlowDown()
+    {
+        _navMeshAgent.speed = 4;
+        yield return new WaitForSeconds(0.2f);
+        _navMeshAgent.speed = 5;
     }
 
     private void Die()

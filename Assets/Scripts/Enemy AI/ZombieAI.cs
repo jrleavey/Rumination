@@ -37,11 +37,13 @@ public class ZombieAI : MonoBehaviour
     public LayerMask targetMask;
     public LayerMask ObstructionMask;
     public bool canSeePlayer;
-    private bool isDying = false;
     [SerializeField]
     private bool haveIScreamed = false;
     [SerializeField]
     private GameObject[] _hitboxes;
+
+    private bool canIplayAttackSound = true;
+    
 
 
     private int _maxhp = 6;
@@ -55,11 +57,20 @@ public class ZombieAI : MonoBehaviour
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
-        _currentHp = Random.Range(1, 6);
+        _currentHp = Random.Range(3, 6);
     }
 
     void Update()
     {
+        if (_navMeshAgent.speed == 0)
+        {
+            _anim.SetBool("isMoving", false);
+        }
+        else
+        {
+            _anim.SetBool("isMoving", true);
+
+        }
 
         switch (_AIState)
         {
@@ -70,27 +81,19 @@ public class ZombieAI : MonoBehaviour
                 ChasePlayer();
                 break;
             case AIState.Dying:
-                Die();
+                //Die();
                 break;
         }
 
         if (canSeePlayer == true)
         {
+            StopCoroutine(RandomWaitTimer());
             StartCoroutine(Roar());
             _AIState = AIState.Hostile;
         }
         if (_currentHp <= 0)
         {
             _AIState = AIState.Dying;
-        }
-        if (_navMeshAgent.speed == 0)
-        {
-            _anim.SetBool("isMoving", false);
-        }
-        else
-        {
-            _anim.SetBool("isMoving", true);
-
         }
     }
 
@@ -105,17 +108,13 @@ public class ZombieAI : MonoBehaviour
     }
     private IEnumerator Roar()
     {
-        _navMeshAgent.speed = 0;
-
         if (_audioSource.isActiveAndEnabled == false)
         {
             _audioSource.enabled = true;
         }
         _anim.SetTrigger("hasSeenPlayer");
         yield return new WaitForSeconds(2f);
-        _navMeshAgent.speed = 5;
-        _anim.SetBool("haveIScreamed", true);
-
+        haveIScreamed = true;
     }
     private void FieldOfViewCheck()
     {
@@ -164,7 +163,7 @@ public class ZombieAI : MonoBehaviour
         int wait_time = Random.Range(3, 7);
         _navMeshAgent.speed = 0;
         yield return new WaitForSeconds(wait_time);
-        _navMeshAgent.speed = 5;
+        _navMeshAgent.speed = 2;
         print("I waited for " + wait_time + "sec");
         _IAmWaiting = false;
     }
@@ -183,20 +182,37 @@ public class ZombieAI : MonoBehaviour
     private void ChasePlayer()
     {
         _isChasingPlayer = true;
-        StartCoroutine(Roar());
-        _navMeshAgent.destination = _player.transform.position;
-
-        if (_navMeshAgent.remainingDistance < 1)
+        _navMeshAgent.speed = 0;
+        if (haveIScreamed == false)
         {
-            _anim.SetBool("inRangetoAttack", true);
-            _hitboxes[0].SetActive(true);
-            _hitboxes[1].SetActive(true);
+
+            StartCoroutine(Roar());
+        }
+        else if (haveIScreamed == true && Roar() != null)
+        {
+            StopCoroutine(Roar());
+            _navMeshAgent.speed = 2;
 
         }
-        else
+        _navMeshAgent.destination = _player.transform.position;
+
+        if (_navMeshAgent.remainingDistance < 1.5f)
+        {
+            _anim.SetBool("inRangetoAttack", true);
+            if (canIplayAttackSound == true)
+            {
+                AudioSource.PlayClipAtPoint(_attack, transform.position);
+                canIplayAttackSound = false;
+                StartCoroutine(AttackSoundTimer());
+            }
+            _navMeshAgent.speed = 0;
+            _hitboxes[0].SetActive(true);
+
+        }
+        else if (haveIScreamed == true && _navMeshAgent.remainingDistance > 1.5f)
         {
             _hitboxes[0].SetActive(false);
-            _hitboxes[1].SetActive(false);
+            _navMeshAgent.speed = 2;
             _anim.SetBool("inRangetoAttack", false);
 
         }
@@ -204,6 +220,14 @@ public class ZombieAI : MonoBehaviour
     private void Damage()
     {
         _currentHp--;
+        if (_currentHp >= 1)
+        {
+            AudioSource.PlayClipAtPoint(_onHit, transform.position, 100f);
+        }
+        else if (_currentHp <= 0)
+        {
+            Die();
+        }
         canSeePlayer = true;
     }
 
@@ -214,11 +238,17 @@ public class ZombieAI : MonoBehaviour
             _anim.SetTrigger("isDying");
             _navMeshAgent.enabled = false;
             StartCoroutine(DespawnTimer());
+            AudioSource.PlayClipAtPoint(_onDeath, transform.position, 100f);
         }
     }
     private IEnumerator DespawnTimer()
     {
         yield return new WaitForSeconds(4f);
         Destroy(this.gameObject);
+    }
+    private IEnumerator AttackSoundTimer()
+    {
+        yield return new WaitForSeconds(1.2f);
+        canIplayAttackSound = true;
     }
 }

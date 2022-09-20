@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Hunter_Damage_hit
+  - Zombie_Damage_hit
   layers:
   - Default
   - TransparentFX
