@@ -3,12 +3,17 @@ guid: 9fdb304b18db4d04bad15c5e865959df
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: maya_ss_ceiling
+    second: {fileID: 2100000, guid: 6e1b75a2b66be2f44ba22e3579bf90f7, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 1
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

@@ -8,17 +8,17 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
-    second: {instanceID: 0}
+    second: {fileID: 2100000, guid: d34c4741cd7554146a3c4c4a43c0332d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: window_pane_mat
-    second: {instanceID: 0}
+    second: {fileID: 2100000, guid: 606b6387a53430d4582818b408395b93, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 1
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

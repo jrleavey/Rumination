@@ -6,12 +6,22 @@ ModelImporter:
   - first:
       74: 1827226128182048838
     second: Apt_Hall_Door_Open
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Apt_In_Door_Frame
+    second: {fileID: 2100000, guid: 68d75b16e336a3a46a4042b5964d9fbc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Apt_In_Door_Main
+    second: {fileID: 2100000, guid: 02789e3f9eca84b4dbb07e0a28d45197, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 1
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0

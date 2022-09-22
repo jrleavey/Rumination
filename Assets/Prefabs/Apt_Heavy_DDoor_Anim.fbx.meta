@@ -11,17 +11,17 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Apt_In_Door_Frame
-    second: {instanceID: 0}
+    second: {fileID: 2100000, guid: 90b5e69d9566b924cbc41fa238786f2c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Apt_In_Door_Main
-    second: {instanceID: 0}
+    second: {fileID: 2100000, guid: d7ed233dc34d0f342ac55a43b0f5468c, type: 2}
   materials:
     materialImportMode: 1
     materialName: 1
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
