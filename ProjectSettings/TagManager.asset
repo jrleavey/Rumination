@@ -7,6 +7,19 @@ TagManager:
   - Enemy
   - Hunter_Damage_hit
   - Zombie_Damage_hit
+  - Medkit
+  - Shotgun
+  - Key
+  - Handgun Ammo
+  - Shotgun Ammo
+  - Journal1
+  - Journal2
+  - Journal3
+  - Journal4
+  - Journal
+  - Door
+  - LockedDoor
+  - EndDoor
   layers:
   - Default
   - TransparentFX

@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     private Text _healthText;
     [SerializeField]
     private Text _ammoText;
+    [SerializeField]
+    private GameObject pauseMenu;
     void Start()
     {
         _player = GameObject.Find("Player");
@@ -19,5 +21,17 @@ public class UIManager : MonoBehaviour
     void Update()
     {
     
+    }
+
+   public void Unpause()
+    {
+        pauseMenu.SetActive(false);
+        Time.timeScale = 1;
+    }
+
+    public void Pause()
+    {
+        pauseMenu.SetActive(true);
+        Time.timeScale = 0;
     }
 }

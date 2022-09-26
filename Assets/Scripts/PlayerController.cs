@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private float _horizMove;
     private float _vertMove;
     [SerializeField]
-    private GameManager _gameManager;
+    private UIManager _uimanager;
     [SerializeField]
     private int _handgunAmmo;
     [SerializeField]
@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour
     private Animator _anim;
     [SerializeField]
     private GameObject RaycastHolder;
-    private float damage;
     private float gunDamage = 1;
     private AudioSource _audioSource;
     [SerializeField]
@@ -69,6 +68,46 @@ public class PlayerController : MonoBehaviour
     public bool leftAnalogStickVertical;
     public bool leftTrigger;
     private bool isMenuOpen = false;
+    [SerializeField]
+    private bool haveIFoundShotgun = false;
+    [SerializeField]
+    private bool canShowMedkitPrompt = true;
+
+
+
+    [SerializeField]
+    private GameObject handgunAmmoText;
+    [SerializeField]
+    private GameObject shotgunAmmoText;
+    [SerializeField]
+    private GameObject medkitText;
+    [SerializeField]
+    private GameObject fullHealthText;
+    [SerializeField]
+    private GameObject journalText;
+    [SerializeField]
+    private GameObject journal1Text;
+    [SerializeField]
+    private GameObject journal2Text;
+    [SerializeField]
+    private GameObject journal3Text;
+    [SerializeField]
+    private GameObject journal4Text;
+    [SerializeField]
+    private GameObject shotgunText;
+    [SerializeField]
+    private GameObject keyText;
+
+
+
+    [SerializeField]
+    private bool amIReading = false;
+    [SerializeField]
+    private bool istTimedStopped = false;
+    [SerializeField]
+    private bool isJournalActive = false;
+    [SerializeField]
+    private bool canIUnpause = false;
 
     private void Awake()
     {
@@ -127,6 +166,21 @@ public class PlayerController : MonoBehaviour
         {
             fireRate = 1.7f;
         }
+
+        if (istTimedStopped == false)
+        {
+            Time.timeScale = 1;
+        }
+        else if (istTimedStopped == true)
+        {
+            Time.timeScale = 0;
+        }
+
+        if (isJournalActive == true && aButton == true && canIUnpause == true)
+        {
+            istTimedStopped = !istTimedStopped;
+            canIUnpause = false;
+        }
     }
 
     private void InputSetup()
@@ -146,12 +200,16 @@ public class PlayerController : MonoBehaviour
     private void Menu_performed(InputAction.CallbackContext obj)
     {
         isMenuOpen = !isMenuOpen;
+        _uimanager.GetComponent<UIManager>().Pause();
     }
 
     private void LeftStickClick_performed(InputAction.CallbackContext obj)
     {
-        isUsingHandgun = !isUsingHandgun;
-        SwapWeapon();
+        if (haveIFoundShotgun == true)
+        {
+            isUsingHandgun = !isUsingHandgun;
+            SwapWeapon();
+        }
     }
 
     private void LeftTrigger_canceled(InputAction.CallbackContext obj)
@@ -203,7 +261,7 @@ public class PlayerController : MonoBehaviour
             isAiming = true;
             _speed = 0;
             _anim.SetBool("isAiming", true);
-        }  
+        }
         else
         {
             _anim.SetBool("isAiming", false);
@@ -256,7 +314,7 @@ public class PlayerController : MonoBehaviour
         {
             isMoving = false;
         }
-                  
+
     }
     private void ShotgunRay()
     {
@@ -265,8 +323,8 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 direction = RaycastHolder.transform.forward;
             Vector3 spread = Vector3.zero;
-            spread += RaycastHolder.transform.up * Random.Range(-.05f, .05f); 
-            spread += RaycastHolder.transform.right * Random.Range(-.05f, .05f); 
+            spread += RaycastHolder.transform.up * Random.Range(-.05f, .05f);
+            spread += RaycastHolder.transform.right * Random.Range(-.05f, .05f);
             direction += spread.normalized * Random.Range(0f, 0.2f);
             hit.collider.SendMessage("Damage", gunDamage);
 
@@ -278,12 +336,12 @@ public class PlayerController : MonoBehaviour
     }
 
 
-public void Heal(int healingAmount)
+    public void Heal(int healingAmount)
     {
         Debug.Log("Player has healed");
         _currentHP = _currentHP + healingAmount;
 
-        
+
     }
     public void HandgunAmmoPickup()
     {
@@ -307,7 +365,7 @@ public void Heal(int healingAmount)
     {
         if (isInvincible)
         {
-            return;     
+            return;
         }
         _currentHP -= damage;
 
@@ -374,6 +432,184 @@ public void Heal(int healingAmount)
             TookDamage(1);
         }
     }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Handgun Ammo")
+        {
+            handgunAmmoText.SetActive(true);
+            if (aButton == true)
+            {
+                _handgunAmmo = _handgunAmmo + 10;
+                handgunAmmoText.SetActive(false);
+                Destroy(other.gameObject);
+            }
+
+        }
+        if (other.tag == "Shotgun Ammo")
+        {
+            shotgunAmmoText.SetActive(true);
+            if (aButton == true)
+            {
+                _shotgunAmmo = _shotgunAmmo + 5;
+                shotgunAmmoText.SetActive(false);
+                Destroy(other.gameObject);
+            }
+
+        }
+        if (other.tag == "Medkit" && canShowMedkitPrompt == true)
+        {
+            medkitText.SetActive(true);
+            if (aButton == true && _currentHP == 5)
+            {
+
+                fullHealthText.SetActive(true);
+                canShowMedkitPrompt = false;
+                StartCoroutine(FullHealthTimer());
+
+            }
+            if (aButton == true && _currentHP < 5)
+            {
+                medkitText.SetActive(false);
+                _currentHP = _currentHP + 2;
+                if (_currentHP > _maxHp)
+                {
+                    _currentHP = 5;
+                }
+                medkitText.SetActive(false);
+                Destroy(other.gameObject);
+            }
+        }
+        if (other.tag == "Journal1")
+        {
+            journalText.SetActive(true);
+            if (aButton == true)
+            {
+                amIReading = true;
+                journalText.SetActive(false);
+                journal1Text.SetActive(true);
+                istTimedStopped = !istTimedStopped;
+                isJournalActive = true;
+                StartCoroutine(ReadingJournalTimer());
+                StartCoroutine(PauseTimer());
+                if (aButton == true && amIReading == false)
+                {
+                    journal1Text.SetActive(false);
+                    Destroy(other.gameObject);
+                    istTimedStopped = !istTimedStopped;
+
+                }
+            }
+        }
+        if (other.tag == "Journal2")
+        {
+            journalText.SetActive(true);
+            if (aButton == true)
+            {
+                journalText.SetActive(false);
+                journal2Text.SetActive(true);
+                Destroy(other.gameObject);
+            }
+        }
+        if (other.tag == "Journal3")
+        {
+            journalText.SetActive(true);
+            if (aButton == true)
+            {
+                journalText.SetActive(false);
+                journal3Text.SetActive(true);
+                Destroy(other.gameObject);
+            }
+        }
+        if (other.tag == "Journal4")
+        {
+            journalText.SetActive(true);
+            if (aButton == true)
+            {
+                journalText.SetActive(false);
+                journal4Text.SetActive(true);
+                Destroy(other.gameObject);
+            }
+        }
+        if (other.tag == "Door")
+        {
+            if (aButton == true)
+            {
+                other.gameObject.GetComponent<DoorLogic>().DoorStuff();
+            }
+        }
+        if (other.tag == "LockedDoor")
+        {
+
+        }
+        if (other.tag == "EndDoor")
+        {
+
+        }
+        if (other.tag == "Shotgun")
+        {
+
+        }
+        if (other.tag == "Key")
+        {
+
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Handgun Ammo")
+        {
+            handgunAmmoText.SetActive(false);
+        }
+        if (other.tag == "Shotgun Ammo")
+        {
+            shotgunAmmoText.SetActive(false);
+        }
+        if (other.tag == "Medkit")
+        {
+            medkitText.SetActive(false);
+        }
+        if (other.tag == "Journal1")
+        {
+            journal1Text.SetActive(false);
+            journalText.SetActive(false);
+
+        }
+        if (other.tag == "Journal2")
+        {
+            journal2Text.SetActive(false);
+            journalText.SetActive(false);
+
+        }
+        if (other.tag == "Journal3")
+        {
+            journal3Text.SetActive(false);
+            journalText.SetActive(false);
+
+        }
+        if (other.tag == "Journal4")
+        {
+            journal4Text.SetActive(false);
+            journalText.SetActive(false);
+
+        }
+        if (other.tag == " Shotgun")
+        {
+            shotgunText.SetActive(false);
+        }
+        if (other.tag == "Key")
+        {
+            keyText.SetActive(false);
+        }
+    }
+    //public void ReadingJournal()
+    //{
+    //    amIReading = true;
+    //    StartCoroutine(ReadingJournalTimer());
+    //    if (aButton == true && amIReading == false)
+    //    {
+    //        journal1Text.SetActive(false);
+    //    }
+    //}
 
     private void VisibleWeapon()
     {
@@ -404,8 +640,27 @@ public void Heal(int healingAmount)
 
     private IEnumerator ButtonFailsafeEnd()
     {
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSecondsRealtime(.4f);
         aButton = false;
 
+    }
+
+    private IEnumerator FullHealthTimer()
+    {
+        medkitText.SetActive(false);
+        yield return new WaitForSeconds(2f);
+        fullHealthText.SetActive(false);
+        canShowMedkitPrompt = true;
+    }
+    private IEnumerator ReadingJournalTimer()
+    {
+        yield return new WaitForSecondsRealtime(.8f);
+        amIReading = false;
+
+    }
+    private IEnumerator PauseTimer()
+    {
+        yield return new WaitForSecondsRealtime(.8f);
+        canIUnpause = true;
     }
 }

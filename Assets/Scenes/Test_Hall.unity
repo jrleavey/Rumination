@@ -1357,7 +1357,7 @@ RectTransform:
   - {fileID: 3010180}
   - {fileID: 1702932097}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1716,7 +1716,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -1781,7 +1781,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &968881400
 MonoBehaviour:
@@ -1824,7 +1824,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1118405652
 GameObject:
@@ -2080,7 +2080,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1196418682
 GameObject:
@@ -2796,11 +2796,28 @@ MonoBehaviour:
   _handgunShot: {fileID: 8300000, guid: 22d123da4f1f4d747bd68a23d26cfd2e, type: 3}
   _shotgunShot: {fileID: 8300000, guid: 96c1da0ced2e0c840befb60865df8ea6, type: 3}
   _outOfAmmo: {fileID: 8300000, guid: c98b38e6e0a56314fb64a294fbe491d8, type: 3}
+  _weapons: []
+  fireRate: 5
+  nextFire: -1
   aButton: 0
   menuButton: 0
   leftAnalogStickHorizontal: 0
   leftAnalogStickVertical: 0
   leftTrigger: 0
+  haveIFoundShotgun: 0
+  canShowMedkitPrompt: 1
+  handgunAmmoText: {fileID: 0}
+  shotgunAmmoText: {fileID: 0}
+  medkitText: {fileID: 0}
+  fullHealthText: {fileID: 0}
+  journalText: {fileID: 0}
+  journal1Text: {fileID: 0}
+  journal2Text: {fileID: 0}
+  journal3Text: {fileID: 0}
+  journal4Text: {fileID: 0}
+  shotgunText: {fileID: 0}
+  keyText: {fileID: 0}
+  amIReading: 0
 --- !u!95 &1354141141
 Animator:
   serializedVersion: 3
@@ -3054,7 +3071,7 @@ Transform:
   - {fileID: 1118405653}
   - {fileID: 336118152}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1685823563
 GameObject:
@@ -3279,7 +3296,7 @@ Transform:
   - {fileID: 1685823564}
   - {fileID: 466290806}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1799901737
 GameObject:
@@ -3409,7 +3426,7 @@ Transform:
   - {fileID: 307382664}
   - {fileID: 1932466613}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1853954659
 GameObject:
