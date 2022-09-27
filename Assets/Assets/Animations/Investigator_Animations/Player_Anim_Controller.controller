@@ -301,7 +301,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Walk_With_Shotgun
-  m_Speed: 1
+  m_Speed: 0.7
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6871442740579562585}
@@ -355,7 +355,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Player_Walking
-  m_Speed: 1
+  m_Speed: 0.62
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -3108465371179427759}

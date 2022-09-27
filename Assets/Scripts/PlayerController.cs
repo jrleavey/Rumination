@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -15,13 +14,44 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool isAiming;
     [SerializeField]
+    private bool isUsingHandgun = true;
+    private bool isInvincible = false;
+    public bool aButton;
+    public bool menuButton;
+    public bool leftAnalogStickVertical;
+    public bool leftTrigger;
+    [SerializeField]
+    private bool haveIFoundShotgun = false;
+    [SerializeField]
+    private bool canShowMedkitPrompt = true;
+    [SerializeField]
+    private bool amIReading = false;
+    [SerializeField]
+    private bool istTimedStopped = false;
+    [SerializeField]
+    private bool isJournalActive = false;
+    [SerializeField]
+    private bool canIUnpause = false;
+    [SerializeField]
+    private bool doIHaveTheKey = false;
+    [SerializeField]
+    private bool isTheGamePaused = false;
+
+
+    [SerializeField]
     private float _rotateSpeed;
     [SerializeField]
     private float _speed;
     private float _horizMove;
     private float _vertMove;
+    private float gunDamage = 1;
     [SerializeField]
-    private UIManager _uimanager;
+    private float fireRate = 5f;
+    [SerializeField]
+    private float nextFire = -1f;
+    public float leftAnalogStickHorizontal;
+
+
     [SerializeField]
     private int _handgunAmmo;
     [SerializeField]
@@ -30,17 +60,17 @@ public class PlayerController : MonoBehaviour
     private int _currentHP;
     [SerializeField]
     private int _maxHp = 5;
-    [SerializeField]
-    private Text _healthTxt;
-    [SerializeField]
-    private Text _ammoTxt;
-    [SerializeField]
-    private bool isUsingHandgun = true;
+
+
     private Animator _anim;
     [SerializeField]
     private GameObject RaycastHolder;
-    private float gunDamage = 1;
-    private AudioSource _audioSource;
+    [SerializeField]
+    private GameObject[] _weapons;
+    [SerializeField]
+    private GameObject _footstepHolder;
+
+
     [SerializeField]
     private AudioClip _handgunShot;
     [SerializeField]
@@ -48,33 +78,26 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private AudioClip _outOfAmmo;
     [SerializeField]
-    private GameObject[] _weapons;
-
-
+    private AudioClip _heal;
     [SerializeField]
-    private float fireRate = 5f;
+    private AudioClip _pickuphAmmo;
     [SerializeField]
-    private float nextFire = -1f;
-
-    private bool isInvincible = false;
-
+    private AudioClip _pickupsAmmo;
+    [SerializeField]
+    private AudioClip _pickupShotgun;
+    [SerializeField]
+    private AudioClip _footsteps;
 
 
     private PlayerControls _playerControls;
 
-    public bool aButton;
-    public bool menuButton;
-    public float leftAnalogStickHorizontal;
-    public bool leftAnalogStickVertical;
-    public bool leftTrigger;
-    private bool isMenuOpen = false;
+
     [SerializeField]
-    private bool haveIFoundShotgun = false;
+    private UIManager _uimanager;
     [SerializeField]
-    private bool canShowMedkitPrompt = true;
-
-
-
+    private Text _healthTxt;
+    [SerializeField]
+    private Text _ammoTxt;
     [SerializeField]
     private GameObject handgunAmmoText;
     [SerializeField]
@@ -97,17 +120,14 @@ public class PlayerController : MonoBehaviour
     private GameObject shotgunText;
     [SerializeField]
     private GameObject keyText;
+    [SerializeField]
+    private GameObject lockedDoorNoKeyText;
+    [SerializeField]
+    private GameObject lockedDoorWithKeyText;
 
 
 
-    [SerializeField]
-    private bool amIReading = false;
-    [SerializeField]
-    private bool istTimedStopped = false;
-    [SerializeField]
-    private bool isJournalActive = false;
-    [SerializeField]
-    private bool canIUnpause = false;
+
 
     private void Awake()
     {
@@ -117,21 +137,12 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _rotateSpeed = 200f;
-        _speed = 4f;
+        _speed = 1.7f;
         _currentHP = _maxHp;
 
         _playerControls = new PlayerControls();
         _playerControls.Controller.Enable();
         InputSetup();
-
-        //if (abutton is true && conditional)
-        {
-            //do game logic
-        }
-
-        //Switch statement to check pickups
-        //check tag as string for switch value
-        // do logic
 
         _anim.SetBool("isUsingHandgun", true);
     }
@@ -176,10 +187,9 @@ public class PlayerController : MonoBehaviour
             Time.timeScale = 0;
         }
 
-        if (isJournalActive == true && aButton == true && canIUnpause == true)
+        if (amIReading == true && canIUnpause == true && aButton == true)
         {
             istTimedStopped = !istTimedStopped;
-            canIUnpause = false;
         }
     }
 
@@ -199,8 +209,15 @@ public class PlayerController : MonoBehaviour
 
     private void Menu_performed(InputAction.CallbackContext obj)
     {
-        isMenuOpen = !isMenuOpen;
+        istTimedStopped = !istTimedStopped;
         _uimanager.GetComponent<UIManager>().Pause();
+        isTheGamePaused = true;
+
+        if (isTheGamePaused == true)
+        {
+            istTimedStopped = false;
+            isTheGamePaused = false;
+        }
     }
 
     private void LeftStickClick_performed(InputAction.CallbackContext obj)
@@ -229,6 +246,7 @@ public class PlayerController : MonoBehaviour
         if (Mathf.Abs(leftStick.y) > 0.2f)
         {
             isMoving = true;
+            _footstepHolder.SetActive(true);
             _vertMove = leftStick.y * Time.deltaTime * _speed;
             this.gameObject.transform.Translate(0, 0, _vertMove * _speed);
 
@@ -236,6 +254,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             isMoving = false;
+            _footstepHolder.SetActive(false);
         }
         if (Mathf.Abs(leftStick.x) > 0.2f)
         {
@@ -266,7 +285,7 @@ public class PlayerController : MonoBehaviour
         {
             _anim.SetBool("isAiming", false);
             isAiming = false;
-            _speed = 2;
+            _speed = 1.7f;
 
         }
 
@@ -441,6 +460,7 @@ public class PlayerController : MonoBehaviour
             {
                 _handgunAmmo = _handgunAmmo + 10;
                 handgunAmmoText.SetActive(false);
+                AudioSource.PlayClipAtPoint(_pickuphAmmo, transform.position);
                 Destroy(other.gameObject);
             }
 
@@ -489,7 +509,6 @@ public class PlayerController : MonoBehaviour
                 journal1Text.SetActive(true);
                 istTimedStopped = !istTimedStopped;
                 isJournalActive = true;
-                StartCoroutine(ReadingJournalTimer());
                 StartCoroutine(PauseTimer());
                 if (aButton == true && amIReading == false)
                 {
@@ -539,19 +558,42 @@ public class PlayerController : MonoBehaviour
         }
         if (other.tag == "LockedDoor")
         {
+            if (doIHaveTheKey == false && aButton == true)
+            {
+                lockedDoorNoKeyText.SetActive(true);
+            }
+            else if (doIHaveTheKey == true && aButton == true)
+            {
+                lockedDoorWithKeyText.SetActive(true);
+                other.gameObject.GetComponent<DoorLogic>().DoorStuff();
 
+            }
         }
         if (other.tag == "EndDoor")
         {
-
+            // Ending Screen
         }
         if (other.tag == "Shotgun")
         {
-
+            shotgunText.SetActive(true);
+            if (aButton == true)
+            {
+                haveIFoundShotgun = true;
+                _shotgunAmmo = 5;
+                shotgunText.SetActive(false);
+                Destroy(other.gameObject);
+            }
         }
         if (other.tag == "Key")
         {
+            keyText.SetActive(true);
 
+            if (aButton == true)
+            {
+                doIHaveTheKey = true;
+                keyText.SetActive(false);
+                Destroy(other.gameObject);
+            }
         }
     }
     private void OnTriggerExit(Collider other)
@@ -600,17 +642,14 @@ public class PlayerController : MonoBehaviour
         {
             keyText.SetActive(false);
         }
-    }
-    //public void ReadingJournal()
-    //{
-    //    amIReading = true;
-    //    StartCoroutine(ReadingJournalTimer());
-    //    if (aButton == true && amIReading == false)
-    //    {
-    //        journal1Text.SetActive(false);
-    //    }
-    //}
+        if (other.tag == "LockedDoor")
+        {
+            lockedDoorWithKeyText.SetActive(false);
+            lockedDoorNoKeyText.SetActive(false);
 
+
+        }
+    }
     private void VisibleWeapon()
     {
         if (isUsingHandgun == true)
@@ -652,15 +691,20 @@ public class PlayerController : MonoBehaviour
         fullHealthText.SetActive(false);
         canShowMedkitPrompt = true;
     }
-    private IEnumerator ReadingJournalTimer()
-    {
-        yield return new WaitForSecondsRealtime(.8f);
-        amIReading = false;
-
-    }
     private IEnumerator PauseTimer()
     {
         yield return new WaitForSecondsRealtime(.8f);
         canIUnpause = true;
     }
+
+    public void KillAllJournals()
+    {
+        journal1Text.SetActive(false);
+        journal2Text.SetActive(false);
+        journal3Text.SetActive(false);
+        journal4Text.SetActive(false);
+
+    }
+
+
 }

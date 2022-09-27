@@ -26,12 +26,11 @@ public class UIManager : MonoBehaviour
    public void Unpause()
     {
         pauseMenu.SetActive(false);
-        Time.timeScale = 1;
+        _player.GetComponent<PlayerController>().KillAllJournals();
     }
 
     public void Pause()
     {
         pauseMenu.SetActive(true);
-        Time.timeScale = 0;
     }
 }

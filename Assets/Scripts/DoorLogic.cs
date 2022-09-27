@@ -7,10 +7,18 @@ public class DoorLogic : MonoBehaviour
    public bool amIOpen = false;
    public bool canFlipamIOpen = true;
 
+    private AudioSource _audioSource;
+    [SerializeField]
+    private AudioClip _openDoor;
+    [SerializeField]
+    private AudioClip _closeDoor;
+
+
     public GameObject innerDoor;
     // Start is called before the first frame update
     void Start()
     {
+        _audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -21,12 +29,15 @@ public class DoorLogic : MonoBehaviour
             OpenMe();
             canFlipamIOpen = false;
             StartCoroutine(DoorOpenTimer());
+            AudioSource.PlayClipAtPoint(_openDoor, transform.position);
         }
         else if (amIOpen == true && canFlipamIOpen == true)
         {
             CloseMe();
             canFlipamIOpen = false;
             StartCoroutine(DoorCloseTimer());
+            AudioSource.PlayClipAtPoint(_closeDoor, transform.position);
+
         }
     }
 

@@ -53,7 +53,7 @@ public class HunterAI : MonoBehaviour
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
-        _currentHp = Random.Range(5,12);
+        _currentHp = Random.Range(4,7);
     }
 
     void Update()
@@ -111,7 +111,7 @@ public class HunterAI : MonoBehaviour
         }
         _anim.SetTrigger("hasSeenPlayer");
         yield return new WaitForSeconds(2f);
-        _navMeshAgent.speed = 5;
+        _navMeshAgent.speed = 3;
         _anim.SetBool("haveIScreamed", true);
 
     }
@@ -162,7 +162,7 @@ public class HunterAI : MonoBehaviour
         int wait_time = Random.Range(3, 7);
         _navMeshAgent.speed = 0;
         yield return new WaitForSeconds(wait_time);
-        _navMeshAgent.speed = 5;
+        _navMeshAgent.speed = 3;
         print("I waited for " + wait_time + "sec");
         _IAmWaiting = false;
     }
@@ -208,9 +208,9 @@ public class HunterAI : MonoBehaviour
 
     private IEnumerator DamageSlowDown()
     {
-        _navMeshAgent.speed = 4;
+        _navMeshAgent.speed = 2;
         yield return new WaitForSeconds(0.2f);
-        _navMeshAgent.speed = 5;
+        _navMeshAgent.speed = 3;
     }
 
     private void Die()

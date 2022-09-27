@@ -57,7 +57,7 @@ public class ZombieAI : MonoBehaviour
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
-        _currentHp = Random.Range(3, 6);
+        _currentHp = Random.Range(2, 5);
     }
 
     void Update()
