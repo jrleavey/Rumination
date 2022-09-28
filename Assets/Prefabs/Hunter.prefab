@@ -1072,9 +1072,9 @@ MonoBehaviour:
   _IAmWaiting: 0
   _audioSource: {fileID: 8833219705506267422}
   _roar: {fileID: 8300000, guid: ed0cb2b29f55e3c4da72a6b644d64526, type: 3}
-  _onHit: {fileID: 0}
-  _attack: {fileID: 0}
-  _onDeath: {fileID: 0}
+  _onHit: {fileID: 8300000, guid: 2b440fac55ab97e439890eb9e60e9043, type: 3}
+  _attack: {fileID: 8300000, guid: 3b0d51319846dd24aa048824af5e5373, type: 3}
+  _onDeath: {fileID: 8300000, guid: ec4a79d0e9b01644dac9232d9e181e28, type: 3}
   targetMask:
     serializedVersion: 2
     m_Bits: 64

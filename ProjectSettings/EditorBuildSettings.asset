@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 1781c627ca39fec489451452cd0fa2da
   - enabled: 0
-    path: Assets/Scenes/LD_CamTest.unity
-    guid: fba049e597edd5245a59975e4db4502b
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Game.unity
     guid: 4077ecf03a7bd764b8da270ec840c8fc

@@ -37,7 +37,6 @@ public class HunterAI : MonoBehaviour
     public LayerMask targetMask;
     public LayerMask ObstructionMask;
     public bool canSeePlayer;
-    private bool isDying = false;
     [SerializeField]
     private bool haveIScreamed = false;
     [SerializeField]
@@ -47,9 +46,16 @@ public class HunterAI : MonoBehaviour
     private int _currentHp;
 
     [Range(0, 500)] public float walkRadius;
+
+    private BoxCollider _boxcollider;
+
+    private bool isDying = false;
+
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
+
+        _boxcollider = GetComponent<BoxCollider>();
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
@@ -68,7 +74,6 @@ public class HunterAI : MonoBehaviour
                 ChasePlayer();
                 break;
             case AIState.Dying:
-                Die();
                 break;
         }
 
@@ -89,6 +94,10 @@ public class HunterAI : MonoBehaviour
         {
             _anim.SetBool("isMoving", true);
 
+        }
+        if (isDying == true)
+        {
+            transform.Translate(Vector3.down * Time.deltaTime * 0.5f);
         }
     }
 
@@ -202,8 +211,13 @@ public class HunterAI : MonoBehaviour
     private void Damage()
     {
         _currentHp--;
+        AudioSource.PlayClipAtPoint(_onHit, transform.position, 100f);
         StartCoroutine(DamageSlowDown());
         canSeePlayer = true;
+        if (_currentHp <= 0)
+        {
+            Die();
+        }
     }
 
     private IEnumerator DamageSlowDown()
@@ -217,14 +231,19 @@ public class HunterAI : MonoBehaviour
     {
         if (_currentHp <= 0)
         {
+            _boxcollider.enabled = false;
+            _navMeshAgent.enabled = false;
             _anim.SetTrigger("isDying");
             _navMeshAgent.enabled = false;
             StartCoroutine(DespawnTimer());
+            AudioSource.PlayClipAtPoint(_onDeath, transform.position, 100f);
         }
     }
     private IEnumerator DespawnTimer()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2.5f);
+        isDying = true;
+        yield return new WaitForSeconds(1.5f);
         Destroy(this.gameObject);
     }
 }

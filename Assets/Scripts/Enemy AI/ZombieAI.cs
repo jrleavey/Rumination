@@ -43,6 +43,11 @@ public class ZombieAI : MonoBehaviour
     private GameObject[] _hitboxes;
 
     private bool canIplayAttackSound = true;
+
+    private BoxCollider _boxcollider;
+
+    private bool isDying = false;
+
     
 
 
@@ -54,6 +59,7 @@ public class ZombieAI : MonoBehaviour
     void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _boxcollider = GetComponent<BoxCollider>();
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player");
         StartCoroutine(CheckForPlayer());
@@ -95,6 +101,10 @@ public class ZombieAI : MonoBehaviour
         {
             _AIState = AIState.Dying;
         }
+        if (isDying == true)
+        {
+            transform.Translate(Vector3.down * Time.deltaTime * 0.5f);
+        }    
     }
 
     private void Wander()
@@ -163,7 +173,7 @@ public class ZombieAI : MonoBehaviour
         int wait_time = Random.Range(3, 7);
         _navMeshAgent.speed = 0;
         yield return new WaitForSeconds(wait_time);
-        _navMeshAgent.speed = 2;
+        _navMeshAgent.speed = 1.5f;
         print("I waited for " + wait_time + "sec");
         _IAmWaiting = false;
     }
@@ -191,8 +201,7 @@ public class ZombieAI : MonoBehaviour
         else if (haveIScreamed == true && Roar() != null)
         {
             StopCoroutine(Roar());
-            _navMeshAgent.speed = 2;
-
+           
         }
         _navMeshAgent.destination = _player.transform.position;
 
@@ -212,7 +221,7 @@ public class ZombieAI : MonoBehaviour
         else if (haveIScreamed == true && _navMeshAgent.remainingDistance > 1.5f)
         {
             _hitboxes[0].SetActive(false);
-            _navMeshAgent.speed = 2;
+            _navMeshAgent.speed = 1.5f;           
             _anim.SetBool("inRangetoAttack", false);
 
         }
@@ -235,6 +244,8 @@ public class ZombieAI : MonoBehaviour
     {
         if (_currentHp <= 0)
         {
+            _boxcollider.enabled = false;
+            _navMeshAgent.enabled = false;
             _anim.SetTrigger("isDying");
             _navMeshAgent.enabled = false;
             StartCoroutine(DespawnTimer());
@@ -243,7 +254,9 @@ public class ZombieAI : MonoBehaviour
     }
     private IEnumerator DespawnTimer()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2.5f);
+        isDying = true;
+        yield return new WaitForSeconds(1.5f);
         Destroy(this.gameObject);
     }
     private IEnumerator AttackSoundTimer()
