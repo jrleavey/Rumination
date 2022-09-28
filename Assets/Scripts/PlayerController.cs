@@ -42,6 +42,10 @@ public class PlayerController : MonoBehaviour
     private bool haveIPickedUpAmmo = false;
     [SerializeField]
     private bool isDying = false;
+    [SerializeField]
+    private bool didIJustHeal = false;
+    [SerializeField]
+    private bool playeddeathsound = false;
 
 
     [SerializeField]
@@ -91,6 +95,10 @@ public class PlayerController : MonoBehaviour
     private AudioClip _pickupsAmmo;
     [SerializeField]
     private AudioClip _pickupShotgun;
+    [SerializeField]
+    private AudioClip _tookDamage;
+    [SerializeField]
+    private AudioClip _dieSound;
 
 
     private PlayerControls _playerControls;
@@ -130,7 +138,13 @@ public class PlayerController : MonoBehaviour
     private GameObject lockedDoorNoKeyText;
     [SerializeField]
     private GameObject lockedDoorWithKeyText;
+    [SerializeField]
+    private GameObject foundbodytext;
+    [SerializeField]
+    private GameObject examinetext;
 
+
+    private BoxCollider _collider;
 
 
 
@@ -138,6 +152,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         _anim = GetComponent<Animator>();
+        _collider = GetComponent<BoxCollider>();
     }
 
     void Start()
@@ -182,7 +197,7 @@ public class PlayerController : MonoBehaviour
         {
             _speed = 0;
         }
-        else if (amIInteracting == false && isAiming == false && isDying == false)
+        else if (amIInteracting == false && isAiming == false && isDying == false && isInvincible == false)
         {
             _speed = 1.7f;
         }
@@ -204,6 +219,7 @@ public class PlayerController : MonoBehaviour
         if (aButton == true && canIUnpause == true && istTimedStopped == true)
         {
             KillAllJournals();
+            foundbodytext.SetActive(false);
             istTimedStopped = false;
         }
     }
@@ -314,7 +330,7 @@ public class PlayerController : MonoBehaviour
             _speed = 0;
             _anim.SetBool("isAiming", true);
         }
-        else
+        else if (leftTrigger == false && isInvincible == false)
         {
             _anim.SetBool("isAiming", false);
             isAiming = false;
@@ -419,34 +435,42 @@ public class PlayerController : MonoBehaviour
     }
     public void TookDamage(int damage)
     {
-        if (isInvincible)
+        if (isInvincible == true)
         {
             return;
         }
-        _currentHP -= damage;
-
-        if (_currentHP <= 0)
+        else
         {
-            Die();
-            return;
+            _currentHP -= damage;
+            AudioSource.PlayClipAtPoint(_tookDamage, transform.position, 100f);
+            _speed = 2.3f;
+            if (_currentHP <= 0)
+            {
+                Die();
+                return;
+            }
+            StartCoroutine(BecomeInvincible());
         }
-
-        StartCoroutine(BecomeInvincible());
-
     }
     private IEnumerator BecomeInvincible()
     {
         isInvincible = true;
 
         yield return new WaitForSeconds(1f);
-
+        _speed = 1.7f;
         isInvincible = false;
     }
     public void Die()
     {
+
         isDying = true;
         _speed = 0;
         _anim.SetTrigger("isDying");
+        if (playeddeathsound == false)
+        {
+            AudioSource.PlayClipAtPoint(_dieSound, transform.position, 100f);
+            playeddeathsound = true;
+        }
         StartCoroutine(DeathAnimTimer());
     }
     private void SwapWeapon()
@@ -490,7 +514,6 @@ public class PlayerController : MonoBehaviour
                 if (amIInteracting == false)
                 {
                     _handgunAmmo += 10;
-                    haveIPickedUpAmmo = true;
                     _anim.SetTrigger("Interact");
                     amIInteracting = true;
                     StartCoroutine(InteractTimer());
@@ -524,7 +547,7 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Medkit" && canShowMedkitPrompt == true)
         {
             medkitText.SetActive(true);
-            if (aButton == true && _currentHP == 5)
+            if (aButton == true && _currentHP >= 5 && didIJustHeal == false)
             {
 
                 fullHealthText.SetActive(true);
@@ -532,17 +555,19 @@ public class PlayerController : MonoBehaviour
                 StartCoroutine(FullHealthTimer());
 
             }
-            if (aButton == true && _currentHP < 5)
+            if (aButton == true && _currentHP < 5 && amIInteracting == false)
             {
                 _anim.SetTrigger("Interact");
                 medkitText.SetActive(false);
-                _currentHP = _currentHP + 2;
+                _currentHP += 2;
+                amIInteracting = true;
+                medkitText.SetActive(false);
+                Destroy(other.gameObject);
                 if (_currentHP > _maxHp)
                 {
                     _currentHP = 5;
                 }
-                medkitText.SetActive(false);
-                Destroy(other.gameObject);
+                StartCoroutine(InteractTimer());
             }
         }
         if (other.tag == "Journal1")
@@ -626,7 +651,9 @@ public class PlayerController : MonoBehaviour
         }
         if (other.tag == "EndDoor")
         {
-            // Ending Screen
+            _uimanager.GetComponent<UIManager>().WinMenu();
+            istTimedStopped = true;
+
         }
         if (other.tag == "Shotgun")
         {
@@ -663,6 +690,26 @@ public class PlayerController : MonoBehaviour
                 Destroy(other.gameObject);
             }
         }
+        if (other.tag == "Body")
+        {
+            examinetext.SetActive(true);
+            if (aButton == true)
+            {
+                //journalText.SetActive(false);
+                //journal1Text.SetActive(true);
+                //istTimedStopped = true;
+                //canIUnpause = false;
+                //Destroy(other.gameObject);
+                //StartCoroutine(PauseTimer());
+
+                examinetext.SetActive(false);
+                foundbodytext.SetActive(true);
+                istTimedStopped = true;
+                canIUnpause = false;
+                other.gameObject.GetComponent<BoxCollider>().enabled = false;
+                StartCoroutine(PauseTimer());
+            }
+        }
     }
     private void OnTriggerExit(Collider other)
     {
@@ -680,8 +727,14 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Medkit")
         {
             medkitText.SetActive(false);
+            didIJustHeal = false;
             _anim.ResetTrigger("Interact");
 
+        }
+        if (other.tag == "Body")
+        {
+            examinetext.SetActive(false);
+            foundbodytext.SetActive(false);
         }
         if (other.tag == "Journal1")
         {
@@ -779,10 +832,8 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator InteractTimer()
     {
-        haveIPickedUpAmmo = true;
         yield return new WaitForSeconds(1f);
         amIInteracting = false;
-        haveIPickedUpAmmo = false;
     }
     private IEnumerator DeathAnimTimer()
     {

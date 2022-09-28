@@ -18,6 +18,8 @@ public class UIManager : MonoBehaviour
     private GameObject settingsMenu;
     [SerializeField]
     private GameObject deathMenu;
+    [SerializeField]
+    private GameObject winMenu;
 
     [SerializeField]
     private Slider VolumeSlider;
@@ -28,6 +30,7 @@ public class UIManager : MonoBehaviour
     public GameObject optionsFirstButton;
     public GameObject optionsCloseButton;
     public GameObject deathMenuButton;
+    public GameObject winMenuButton;
 
     public GameObject[] _quotes;
 
@@ -100,6 +103,13 @@ public class UIManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(deathMenuButton);
     }  
+
+    public void WinMenu()
+    {
+        winMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(winMenuButton);
+    }
     
     public void Retry()
     {

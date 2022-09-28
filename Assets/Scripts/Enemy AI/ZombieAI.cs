@@ -151,6 +151,8 @@ public class ZombieAI : MonoBehaviour
             else
             {
                 canSeePlayer = false;
+                _anim.ResetTrigger("hasSeenPlayer");
+                _AIState = AIState.Passive;
             }
         }
         else if (canSeePlayer)
@@ -167,6 +169,7 @@ public class ZombieAI : MonoBehaviour
             yield return wait;
             FieldOfViewCheck();
         }
+
     }
     IEnumerator RandomWaitTimer()
     {
